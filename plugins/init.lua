@@ -1,3 +1,30 @@
+local pickers = require "telescope.pickers"
+local finders = require "telescope.finders"
+local conf = require("telescope.config").values
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local utils = require "telescope.utils"
+
+function trim_whitspaces(table)
+  for key, str in pairs(table) do
+    table[key] = str:gsub("%s+", "")
+  end
+end
+
+function get_dababase_list()
+  local raw_list_table = utils.get_os_command_output {
+    "psql",
+    "-c",
+    "SELECT datname FROM pg_database WHERE datname <> ALL ('{template0,template1,postgres}')",
+  }
+  table.remove(raw_list_table, 1)
+  table.remove(raw_list_table, 1)
+  table.remove(raw_list_table)
+  table.remove(raw_list_table)
+  trim_whitspaces(raw_list_table)
+  return raw_list_table
+end
+
 return {
   { "rebelot/kanagawa.nvim" },
   {
@@ -13,11 +40,9 @@ return {
   {
     "epwalsh/obsidian.nvim",
     version = "*", -- recommended, use latest release instead of latest commit
-    lazy = true,
     ft = "markdown",
     -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-    -- event = {
-    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+    -- event = { -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
     --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/**.md"
     --   "BufReadPre path/to/my-vault/**.md",
     --   "BufNewFile path/to/my-vault/**.md",
@@ -64,4 +89,78 @@ return {
   },
   { "sindrets/diffview.nvim" },
   { "akinsho/git-conflict.nvim", version = "*", config = true },
+  {
+    "nvim-telescope/telescope-frecency.nvim",
+    config = function() require("telescope").load_extension "frecency" end,
+  },
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    opts = {
+      ensure_installed = { "python" },
+      handlers = {
+        python = function(source_name)
+          local dap = require "dap"
+          dap.adapters.python = {
+            type = "executable",
+            command = "/usr/bin/python3",
+            args = {
+              "-m",
+              "debugpy.adapter",
+            },
+          }
+
+          dap.configurations.python = {
+            {
+              name = "odoo-bin",
+              type = "python",
+              request = "launch",
+              cwd = "${workspaceFolder}",
+              program = "/home/odoo/Documents/repo/odoo/odoo-bin",
+              args = {
+                "--addons-path",
+                "~/Documents/repo/odoo/addons,~/Documents/repo/enterprise,~/Documents/repo/internal/default,~/Documents/repo/design-themes",
+                "--log-level",
+                "debug_sql",
+                "--limit-memory-soft",
+                "1097152000",
+                "--limit-memory-hard",
+                "1097152000",
+                "--limit-time-real",
+                "7202",
+                "--http-port",
+                "9000",
+                "-d",
+                function()
+                  return coroutine.create(function(coro)
+                    local opts = {}
+                    pickers
+                      .new(opts, {
+                        prompt_title = "Name of the database",
+                        finder = finders.new_table { results = get_dababase_list() },
+                        sorter = conf.generic_sorter(opts),
+                        attach_mappings = function(buffer_number)
+                          actions.select_default:replace(function()
+                            actions.close(buffer_number)
+                            local selection = action_state.get_selected_entry()
+                            coroutine.resume(coro, selection[1])
+                          end)
+                          return true
+                        end,
+                      })
+                      :find()
+                  end)
+                end,
+              },
+            },
+            {
+              type = "python",
+              request = "launch",
+              name = "Launch file",
+              program = "${file}", -- This configuration will launch the current file if used.
+            },
+          }
+        end,
+      },
+    },
+  },
 }

@@ -23,7 +23,7 @@ M.mason_dap = {
         local raw_list_table = utils.get_os_command_output {
           "psql",
           "-c",
-          "SELECT datname FROM pg_database WHERE datname <> ALL ('{template0,template1,postgres}')",
+          "SELECT datname FROM pg_database WHERE datname <> ALL ('{template0,template1,postgres}') ORDER BY datname",
         }
         table.remove(raw_list_table, 1)
         table.remove(raw_list_table, 1)
@@ -265,22 +265,22 @@ M.mason_dap = {
             end)
           end,
         },
-        {
-          name = "py-spy",
-          type = "python",
-          request = "launch",
-          cwd = "${workspaceFolder}",
-          program = "py-spy",
-          args = function()
-            return coroutine.create(function(coro)
-              database_picker(function(database_name)
-                ask_format_output(function(format, filetype)
-                  coroutine.resume(coro, get_py_spy_args(format, filetype, database_name))
-                end)
-              end)
-            end)
-          end,
-        },
+        -- {
+        --   name = "py-spy",
+        --   type = "python",
+        --   request = "launch",
+        --   cwd = "${workspaceFolder}",
+        --   program = "py-spy",
+        --   args = function()
+        --     return coroutine.create(function(coro)
+        --       database_picker(function(database_name)
+        --         ask_format_output(function(format, filetype)
+        --           coroutine.resume(coro, get_py_spy_args(format, filetype, database_name))
+        --         end)
+        --       end)
+        --     end)
+        --   end,
+        -- },
         {
           type = "python",
           request = "launch",

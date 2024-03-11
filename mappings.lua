@@ -31,7 +31,9 @@ M.general = {
       "See definitions without jumping",
     },
     ["<leader>fg"] = {
-      ":lua require('telescope.builtin').live_grep({grep_open_files=true})<CR>",
+      function()
+        require("telescope.builtin").live_grep { grep_open_files = true }
+      end,
       "Grep in current file",
     },
     ["gC"] = { ":tabnew<cr>", "Create a new tab" },
@@ -131,22 +133,45 @@ M.general = {
       end,
       "Terminate",
     },
+    ["<leader>ds"] = {
+      function()
+        require("dap").set_exception_breakpoints()
+      end,
+      "Set Exception Breakpoint",
+    },
     ["<leader>du"] = {
       function()
         require("dapui").toggle {}
       end,
       "Toggle ui",
     },
-
+    ["<leader>gl"] = { "<cmd>GitLink<cr>", "Copy git permlink to clipboard" },
+    ["<leader>gL"] = { "<cmd>GitLink!<cr>", "Open git permlink in browser" },
+    ["<leader>gm"] = { "<cmd>GitLink blame<cr>", "Copy git blame link to clipboard" },
+    ["<leader>gM"] = { "<cmd>GitLink! blame<cr>", "Open git blame link in browser" },
+    ["gx"] = { "<cmd>Browse link<cr>" },
+    ["gR"] = {
+      function()
+        require("trouble").toggle "lsp_references"
+      end,
+      "Open LSP references",
+    },
   },
   v = {
     ["<C-c>"] = { '"+y', "Copy to clipboard" },
     ["<C-v>"] = { '"+p', "Paste to clipboard" },
     ["<C-x>"] = { '"+d', "Cut to clipboard" },
+    ["<leader>gl"] = { "<cmd>GitLink<cr>", "Copy git permlink to clipboard" },
+    ["<leader>gL"] = { "<cmd>GitLink!<cr>", "Open git permlink in browser" },
+    ["<leader>gm"] = { "<cmd>GitLink blame<cr>", "Copy git blame link to clipboard" },
+    ["<leader>gM"] = { "<cmd>GitLink! blame<cr>", "Open git blame link in browser" },
   },
   i = {
     ["<C-v>"] = { '<C-r>"', "Paste to clipboard" },
     ["<C-i>"] = { "<cmd>IconPickerInsert<cr>" },
+  },
+  x = {
+    ["gx"] = { "<cmd>Browse<cr>" },
   },
 }
 

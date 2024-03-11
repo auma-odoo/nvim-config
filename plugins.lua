@@ -252,6 +252,76 @@ local plugins = {
     lazy = false,
   },
 
+  {
+    "tpope/vim-dadbod",
+    cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
+    dependencies = {
+      "kristijanhusak/vim-dadbod-ui",
+      "kristijanhusak/vim-dadbod-completion",
+      "jsborjesson/vim-uppercase-sql",
+    },
+    init = function()
+      vim.g.db_ui_save_location = vim.fn.stdpath "data" .. "/db_ui"
+      vim.g.db_ui_use_nerd_fonts = true
+      vim.g.db_ui_execute_on_save = false
+      vim.g.db_ui_use_nvim_notify = true
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = sql_ft,
+        callback = function()
+          ---@diagnostic disable-next-line: missing-fields
+          local cmp = require "cmp"
+          local global_sources = cmp.get_config().sources
+          local buffer_sources = {}
+
+          -- add globally defined sources (see separate nvim-cmp config)
+          -- this makes e.g. luasnip snippets available since luasnip is configured globally
+          if global_sources then
+            for _, source in ipairs(global_sources) do
+              table.insert(buffer_sources, { name = source.name })
+            end
+          end
+
+          -- add vim-dadbod-completion source
+          table.insert(buffer_sources, { name = "vim-dadbod-completion" })
+
+          -- update sources for the current buffer
+          cmp.setup.buffer { sources = buffer_sources }
+        end,
+      })
+    end,
+  },
+
+  {
+    "linrongbin16/gitlinker.nvim",
+    cmd = { "GitLink" },
+    opts = {},
+    config = function(_, opts)
+      require("gitlinker").setup(opts)
+    end,
+  },
+
+  {
+    "chrishrb/gx.nvim",
+    keys = {},
+    cmd = { "Browse" },
+    init = function()
+      vim.g.netrw_nogx = 1 -- disable netrw gx
+    end,
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = true, -- default settings
+    submodules = false, -- not needed, submodules are required only for tests
+  },
+
+  {
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    },
+  },
   -- To make a plugin not be loaded
   -- {
   --   "NvChad/nvim-colorizer.lua",

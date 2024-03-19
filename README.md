@@ -24,7 +24,7 @@ I also added `obsidian.nvim` for my local wiki. You can remove it if you don't u
 
 ## Debugging
 
-I added a custom debugger for Odoo. The config is in [dapconfig.lua](configs/dapconfig.lua) and you can find the custom config for the UI in [dapuiconfig.lua](configs/dapuiconfig). To access it, you can use the vim command `:Dap...`, or the custom mappings in `<leader>d` (by default, `<leader>` is `space`). 
+I added a custom debugger for Odoo. The config is in [dapconfig.lua](configs/dapconfig.lua) and you can find the custom config for the UI in [dapuiconfig.lua](configs/dapuiconfig.lua). To access it, you can use the vim command `:Dap...`, or the custom mappings in `<leader>d` (by default, `<leader>` is `space`). 
 
 ## Mappings
 

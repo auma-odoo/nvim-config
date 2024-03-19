@@ -13,6 +13,6 @@ for _, lsp in ipairs(servers) do
   }
 end
 
-vim.notify = require("notify")
+
 -- 
 -- lspconfig.pyright.setup { blabla}

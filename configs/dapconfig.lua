@@ -20,13 +20,10 @@ return {
       local get_dababase_list = function()
         local raw_list_table = utils.get_os_command_output {
           "psql",
+          "-t",
           "-c",
           "SELECT datname FROM pg_database WHERE datname <> ALL ('{template0,template1,postgres}') ORDER BY datname",
         }
-        table.remove(raw_list_table, 1)
-        table.remove(raw_list_table, 1)
-        table.remove(raw_list_table)
-        table.remove(raw_list_table)
         trim_whitspaces(raw_list_table)
         return raw_list_table
       end

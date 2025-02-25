@@ -1,8 +1,8 @@
+---@type ChadrcConfig
 local options = {
 
 	base64 = {
 		theme = "catppuccin",
-		theme_toggle = { "catppuccin" },
 	},
 
 	nvdash = {
@@ -25,5 +25,4 @@ local options = {
 	},
 }
 
-local status, chadrc = pcall(require, "chadrc")
-return vim.tbl_deep_extend("force", options, status and chadrc or {})
+return options

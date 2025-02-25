@@ -128,16 +128,12 @@ return {
         }
       end
 
-      local get_normal_arg = function(database_name)
+      local get_debug_arg = function(database_name)
         return {
           "--addons-path",
           "~/Documents/repo/odoo/addons,~/Documents/repo/enterprise,~/Documents/repo/internal/default,~/Documents/repo/design-themes",
           "--log-level",
           "debug_sql",
-          "--limit-memory-soft",
-          "10097152000",
-          "--limit-memory-hard",
-          "10097152000",
           "--limit-time-real",
           "7202",
           "--http-port",
@@ -146,6 +142,20 @@ return {
           database_name,
         }
       end
+
+      local get_normal_arg = function(database_name)
+        return {
+          "--addons-path",
+          "~/Documents/repo/odoo/addons,~/Documents/repo/enterprise,~/Documents/repo/internal/default,~/Documents/repo/design-themes",
+          "--limit-time-real",
+          "7202",
+          "--http-port",
+          "9000",
+          "-d",
+          database_name,
+        }
+      end
+
 
       local get_py_spy_args = function(format, filetype, database_name)
         local datetime = os.date "%Y-%m-%d_%H:%M:%S"
@@ -223,6 +233,29 @@ return {
             end)
           end,
         },
+        {
+          name = "odoo-bin-debug",
+          type = "python",
+          request = "launch",
+          cwd = "${workspaceFolder}",
+          program = "/home/odoo/Documents/repo/odoo/odoo-bin",
+          args = function()
+            return coroutine.create(function(coro)
+              ask_if_new_database(function(answer)
+                if answer then
+                  ask_name_database(function(database_name)
+                    coroutine.resume(coro, get_debug_arg(database_name))
+                  end)
+                else
+                  database_picker(function(selection)
+                    coroutine.resume(coro, get_debug_arg(selection))
+                  end)
+                end
+              end)
+            end)
+          end,
+        },
+
         {
           name = "odoo-bin-test",
           type = "python",

@@ -7,6 +7,8 @@ return {
     -- Use a sub-list to run only the first available formatter
     javascript = { { "prettierd", "prettier" } },
 
-    sql = { "sqlfmt", "sql_formatter"  }
+    sql = { "sqlfmt", "sql_formatter" },
+
+    markdown = { { "prettierd", "prettier" } }
   },
 }

@@ -10,7 +10,7 @@ git clone https://github.com/NvChad/starter ~/.config/nvim
 cd ~/.config/nvim/
 rm -rf lua/ && mkdir lua
 cd ./lua
-git clone https://github.com/auma-odoo/nvim-config.git && nvim
+git clone https://github.com/auma-odoo/nvim-config.git . && nvim
 ```
 
 ## Plugins
